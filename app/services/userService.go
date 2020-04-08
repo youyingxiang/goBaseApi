@@ -24,8 +24,7 @@ func (this *User) Store(bind *bindfield.UserAdd) (err error) {
 }
 
 func (this *User) GetAll() (users []*models.User, err error) {
-	userModel := models.User{}
-	users, err = userModel.GetUsersByWhere(nil)
+	users, err = models.GetUsersByWhere(nil)
 	return
 }
 
@@ -33,11 +32,12 @@ func (this *User) Update(id int, bind *bindfield.UserSave) (err error) {
 	userModel := models.User{}
 
 	found := Mysql.DB.Not("id", id).Where("username=?", bind.Username).First(&userModel).RecordNotFound()
+	// 用户不存在为true 存在为false
 	if !found {
 		err = util.UserNameExistsError
 		return
 	}
-	user, err := userModel.GetUserById(id)
+	user, err := models.GetUserById(id)
 	if err != nil {
 		return
 	}
@@ -45,9 +45,11 @@ func (this *User) Update(id int, bind *bindfield.UserSave) (err error) {
 	if err != nil {
 		return
 	}
-	user.Username = bind.Username
-	user.Name = bind.Name
-	result := Mysql.DB.Save(&user)
+	result := Mysql.DB.Model(&user).Update(models.User{
+		Name:bind.Name,
+		Username:bind.Username,
+		Password:user.Password,
+	})
 	if result.Error != nil {
 		return result.Error
 	}
@@ -66,8 +68,7 @@ func (this *User) Delete(id int) (err error) {
 func (this *User) Login(bind *bindfield.UserLogin) (map[string]string, error) {
 	where := make(map[interface{}]interface{}, 1)
 	where["username"] = bind.Username
-	userModel := models.User{}
-	users, err := userModel.GetUsersByWhere(where)
+	users, err := models.GetUsersByWhere(where)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +80,7 @@ func (this *User) Login(bind *bindfield.UserLogin) (map[string]string, error) {
 		return nil, err
 	}
 
-	tokenString, err := util.GenToken(users[0].Username)
+	tokenString, err := util.GenToken(users[0].ID)
 	if err != nil {
 		return nil, err
 	}
@@ -87,3 +88,11 @@ func (this *User) Login(bind *bindfield.UserLogin) (map[string]string, error) {
 	tokenMap["token"] = tokenString
 	return tokenMap, nil
 }
+
+func shouldPassThrough()  {
+
+}
+
+
+
+

@@ -6,19 +6,19 @@ import (
 )
 
 type MyClaims struct {
-	Username string `json:"username"`
+	UserId int `json:"user_id"`
 	jwt.StandardClaims
 }
 
 // 定义JWT的过期时间，这里以2小时
-const TokenExpireDuration = time.Hour * 2
+const TokenExpireDuration = time.Hour * 2000
 
 var MySecret = []byte("abcd1234567890")
 // GenToken 生成JWT
-func GenToken(username string) (string, error) {
+func GenToken(UserId int) (string, error) {
 	// 创建一个我们自己的声明
 	c := MyClaims{
-		username, // 自定义字段
+		UserId, // 自定义字段
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(TokenExpireDuration).Unix(), // 过期时间
 			Issuer:    "go-api",                               // 签发人

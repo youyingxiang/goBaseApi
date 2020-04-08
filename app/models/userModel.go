@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"rbac/databases"
 	"rbac/util"
 )
@@ -11,7 +10,10 @@ type User struct {
 	Username string `json:"username"`
 	Name     string `json:"name"`
 	Password string `json:"password"`
-	Roles    []Role `gorm:"many2many:admin_role_users"`
+	//Id2      int    `json:"id2"`
+	Roles       []*Role       `gorm:"many2many:admin_role_users"`
+	Permissions []*Permission `gorm:"many2many:admin_user_permissions"`
+	//Logs []Log `gorm:"foreignkey:Log.Ip;association_foreignkey:Id2"`
 }
 
 func (User) TableName() string {
@@ -26,30 +28,6 @@ func (this *User) Store() (id int, err error) {
 	}
 	id = this.ID
 	return
-}
-
-func (this *User) GetUsersByWhere(wheres map[interface{}]interface{}) (users []*User, err error) {
-	db := Mysql.DB
-	if wheres != nil {
-		for i, v := range wheres {
-			db = Mysql.DB.Where(i.(string)+"=?", v)
-		}
-	}
-	result := db.Find(&users)
-	if result.Error != nil {
-		err = result.Error
-		return
-	}
-	return
-}
-
-func (this *User) GetUserById(Id int) (*User, error) {
-	var user User
-	result := Mysql.DB.First(&user, Id)
-	if result.Error != nil {
-		return nil, util.DataNotFoundError
-	}
-	return &user, nil
 }
 
 func (this *User) SetPassword(password string) (err error) {
@@ -76,14 +54,46 @@ func (this *User) DeleteById(id int) (err error) {
 	return
 }
 
-func (this *User) Role() (err error) {
-	var role []Role
-	related := Mysql.DB.Model(this).Related(&role)
-	if related.Error != nil {
-		err = related.Error
+// 获取用户所有的权限
+func (this *User) GetAllPermissions() (permissions []*Permission) {
+	permissions = this.Permissions
+	for _, role := range this.Roles {
+		permissions = append(permissions, role.Permissions...)
+	}
+	return
+}
+
+// 获取当前用户的角色
+func (this *User) GetRoles() (roles []*Role, err error) {
+	//res := Mysql.DB.Model(this).Related(&roles, "Roles").RecordNotFound()
+	//// 没有数据
+	//if res {
+	//	return nil, util.DataNotFoundError
+	//}
+	//return roles, nil
+	return
+}
+
+func GetUserById(Id int) (*User, error) {
+	var user User
+	result := Mysql.DB.Preload("Roles.Permissions").Preload("Permissions").First(&user, Id)
+	if result.Error != nil {
+		return nil, util.DataNotFoundError
+	}
+	return &user, nil
+}
+
+func GetUsersByWhere(wheres map[interface{}]interface{}) (users []*User, err error) {
+	db := Mysql.DB
+	if wheres != nil {
+		for i, v := range wheres {
+			db = Mysql.DB.Where(i.(string)+"=?", v)
+		}
+	}
+	result := db.Preload("Roles").Preload("Permissions").Find(&users)
+	if result.Error != nil {
+		err = result.Error
 		return
 	}
-	fmt.Println(this)
-	fmt.Println(role)
 	return
 }

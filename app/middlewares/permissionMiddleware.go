@@ -9,6 +9,8 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
+	"rbac/app/models"
+	"rbac/util"
 	"strings"
 )
 
@@ -22,12 +24,34 @@ func init() {
 
 func PerMission() func(c *gin.Context) {
 	return func(c *gin.Context) {
+		utilGin := util.Gin{c}
 		if shouldPassThrough(c.Request.URL.Path) {
 			c.Next()
+		} else {
+			// 获取当前用户的所有权限
+			value, _ := c.Get("loginUser")
+			// 类型断言
+			loginUser := value.(*models.User)
+			// 用户的所有权限
+			permissions := loginUser.GetAllPermissions()
+			//permissionShouldPassThrough(permissions,c.Request.URL.Path,c.Request.Method)
+			havePermission := false
+			for _,permission := range permissions {
+				if permission.ShouldPassThrough(c.Request) == true {
+					havePermission = true
+					break
+				}
+			}
+			if havePermission == true {
+				c.Next()
+			} else {
+				utilGin.ParamsError(util.UnAuthError.Error())
+				utilGin.Ctx.Abort()
+				return
+			}
 		}
-		// 获取当前用户的所有权限
 
-		c.Next();
+		//c.Next();
 
 	}
 }
@@ -35,9 +59,9 @@ func PerMission() func(c *gin.Context) {
 func shouldPassThrough(path string) (ok bool) {
 	for _, v := range Excepts {
 		if path != "/" {
-			path = strings.TrimRight(path,"/")
+			path = strings.TrimRight(path, "/")
 		}
-		if strings.EqualFold(v,path) {
+		if strings.EqualFold(v, path) {
 			ok = true
 			return
 		}

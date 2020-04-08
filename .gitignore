@@ -3,3 +3,5 @@ dea
 .idea
 */.DS_Store
 *.DS_Store
+/tmp
+/test/tmp

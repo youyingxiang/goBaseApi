@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
+	"rbac/app/models"
 	"rbac/util"
 	"strings"
 )
@@ -32,7 +33,14 @@ func JWTAuth() func(c *gin.Context) {
 			utilGin.Ctx.Abort()
 			return
 		}
-		c.Set("username", mc.Username)
+		// 当前登陆的用户
+		user, err := models.GetUserById(mc.UserId)
+		if err != nil{
+			utilGin.ParamsError(err.Error())
+			utilGin.Ctx.Abort()
+			return
+		}
+		c.Set("loginUser", user)
 		c.Next()
 	}
 }

@@ -13,10 +13,9 @@ type UserAdd struct {
 }
 
 func (this *UserAdd) UserNameUnique() (err error) {
-	userModel := models.User{}
 	where := make(map[interface{}]interface{}, 1)
 	where["username"] = this.Username
-	users, err := userModel.GetUsersByWhere(where)
+	users, err := models.GetUsersByWhere(where)
 	if err != nil {
 		return
 	}

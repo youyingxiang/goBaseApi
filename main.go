@@ -1,7 +1,7 @@
 package main
 
 import (
-	Mysql "rbac/databases"
+	"rbac/databases"
 	"rbac/router"
 )
 

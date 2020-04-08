@@ -11,7 +11,8 @@ type Role struct {
 	Base
 	Name string  `json:"name"`
 	Slug string  `json:"slug"`
-	User []*User `gorm:"many2many:admin_role_users"`
+	Users []*User `gorm:"many2many:admin_role_users"`
+	Permissions []*Permission `gorm:"many2many:admin_role_permissions"`
 }
 
 func (Role) TableName() string {
