@@ -5,3 +5,4 @@ dea
 *.DS_Store
 /tmp
 /test/tmp
+go.sum
