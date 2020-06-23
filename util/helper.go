@@ -16,7 +16,7 @@ func JsonEncode(v interface{}) (string, error) {
 
 func GeneratePassword(userPassword string) (str string, err error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(userPassword), bcrypt.DefaultCost)
-	if err !=nil {
+	if err != nil {
 		return
 	}
 	str = string(bytes)

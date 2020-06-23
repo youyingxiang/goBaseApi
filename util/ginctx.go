@@ -74,9 +74,9 @@ func (this *Gin) notFoundError(msg string) {
 	})
 }
 
-func (this *Gin) ShouldBind(bind bind)(err error)  {
+func (this *Gin) ShouldBind(bind bind) (err error) {
 	err = this.Ctx.ShouldBind(bind)
-	if err!= nil {
+	if err != nil {
 		return
 	}
 	err = bind.Check()
@@ -85,4 +85,3 @@ func (this *Gin) ShouldBind(bind bind)(err error)  {
 	}
 	return
 }
-

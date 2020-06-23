@@ -14,6 +14,7 @@ type MyClaims struct {
 const TokenExpireDuration = time.Hour * 2000
 
 var MySecret = []byte("abcd1234567890")
+
 // GenToken 生成JWT
 func GenToken(UserId int) (string, error) {
 	// 创建一个我们自己的声明
@@ -21,7 +22,7 @@ func GenToken(UserId int) (string, error) {
 		UserId, // 自定义字段
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(TokenExpireDuration).Unix(), // 过期时间
-			Issuer:    "go-api",                               // 签发人
+			Issuer:    "go-api",                                   // 签发人
 		},
 	}
 	// 使用指定的签名方法创建签名对象
