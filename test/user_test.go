@@ -14,7 +14,7 @@ func Test(t *testing.T) {
 	// 数据库迁移
 	//t.Run("数据库迁移",testAutoMigrate)
 	//t.Run("测试gorm多对多", testManyToMany)
-	t.Run("测试用户的权限",testGetUserPermissions)
+	t.Run("测试用户的权限", testGetUserPermissions)
 	//t.Run("测试用户的角色", testGetUserRoles)
 	//t.Run("测试用户角色的所有权限",testGetUserRolePermissions)
 }
@@ -96,10 +96,10 @@ func testGetUserPermissions(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	permissions, err := user.GetAllPermissions()
-	if err != nil {
-		log.Fatalln(err)
-	}
+	permissions := user.GetAllPermissions()
+	//if err != nil {
+	//	log.Fatalln(err)
+	//}
 	t.Log(permissions)
 }
 
