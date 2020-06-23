@@ -7,6 +7,7 @@ import (
 	"rbac/util"
 	"strconv"
 )
+
 // 保存用户
 func Store(ctx *gin.Context) {
 	var userBind bindfield.UserAdd
@@ -26,6 +27,7 @@ func Store(ctx *gin.Context) {
 	utilGin.Success(nil)
 
 }
+
 // 用户列表
 func Index(ctx *gin.Context) {
 	//params := ctx.Params
@@ -39,7 +41,7 @@ func Index(ctx *gin.Context) {
 	utilGin.Success(users)
 }
 
-func Update(ctx *gin.Context)  {
+func Update(ctx *gin.Context) {
 	var userBind bindfield.UserSave
 	var userService services.User
 	utilGin := util.Gin{Ctx: ctx}
@@ -48,7 +50,7 @@ func Update(ctx *gin.Context)  {
 		utilGin.ParamsError(err.Error())
 		return
 	}
-	id ,err := strconv.Atoi(ctx.Param("id"))
+	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
 		utilGin.ParamsError(err.Error())
 		return
@@ -57,7 +59,7 @@ func Update(ctx *gin.Context)  {
 		utilGin.ParamsError(util.ParamsError.Error())
 		return
 	}
-	err = userService.Update(id,&userBind)
+	err = userService.Update(id, &userBind)
 	if err != nil {
 		utilGin.ParamsError(err.Error())
 		return
@@ -67,10 +69,10 @@ func Update(ctx *gin.Context)  {
 
 }
 
-func Delete(ctx *gin.Context)  {
+func Delete(ctx *gin.Context) {
 	utilGin := util.Gin{Ctx: ctx}
-	userService  := services.User{}
-	id ,err := strconv.Atoi(utilGin.Ctx.Param("id"))
+	userService := services.User{}
+	id, err := strconv.Atoi(utilGin.Ctx.Param("id"))
 	if err != nil {
 		utilGin.ParamsError(err.Error())
 		return
@@ -88,7 +90,7 @@ func Delete(ctx *gin.Context)  {
 }
 
 // 用户登陆
-func Login(ctx *gin.Context)  {
+func Login(ctx *gin.Context) {
 	var bind bindfield.UserLogin
 	var userService services.User
 	utilGin := util.Gin{Ctx: ctx}

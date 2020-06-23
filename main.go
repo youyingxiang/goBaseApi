@@ -5,7 +5,8 @@ import (
 	"rbac/router"
 )
 
-func main()  {
+func main() {
 	defer Mysql.DB.Close()
+
 	router.InitRouter()
 }

@@ -6,3 +6,4 @@ dea
 /tmp
 /test/tmp
 go.sum
+/vendor

@@ -1,9 +1,11 @@
 package middlewares
+
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
+
 // 跨域中间件
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
